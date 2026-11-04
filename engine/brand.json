@@ -1,0 +1,23 @@
+{
+  "name": "My brand",
+  "font": "Cairo",
+  "direction": "rtl",
+  "digits": "arabic",
+  "colors": {
+    "bg": "#121014",
+    "card": "#1C1A20",
+    "card2": "#24212A",
+    "line": "rgba(255,255,255,0.09)",
+    "bar": "rgba(255,255,255,0.16)",
+    "text": "#F4F1EC",
+    "dim": "#8E8796",
+    "accent": "#F3C170",
+    "onAccent": "#16131A",
+    "second": "#9B6CC6",
+    "ok": "#6FCF8A",
+    "bad": "#E8705F"
+  },
+  "logo": null,
+  "particles": true,
+  "grain": true
+}

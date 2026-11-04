@@ -1,0 +1,36 @@
+{
+  "name": "talk-video-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Talking-head videos with a pop-out head and one widget per sentence. Made by the talk-video Claude Code plugin.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "doctor": "node scripts/doctor.mjs",
+    "record": "node scripts/recorder.mjs",
+    "transcribe": "node scripts/transcribe.mjs",
+    "cut": "node scripts/cut.mjs",
+    "matte": "node scripts/matte.mjs",
+    "stills": "node scripts/stills.mjs",
+    "render": "node scripts/render.mjs",
+    "studio": "remotion studio",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.538",
+    "@remotion/cli": "4.0.538",
+    "@remotion/google-fonts": "4.0.538",
+    "@remotion/media": "4.0.538",
+    "@remotion/renderer": "4.0.538",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.538",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "typescript": "5.9.3"
+  }
+}

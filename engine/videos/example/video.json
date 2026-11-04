@@ -1,0 +1,15 @@
+{
+  "clip": null,
+  "seconds": 24,
+  "scenes": [
+    { "from": 0, "face": "hidden", "caption": ["كل جملة بتقولها", "ليها رسمة."], "accent": ["رسمة."], "widget": { "kind": "question", "text": "؟" } },
+    { "from": 2.6, "face": "hidden", "caption": ["الطريقة القديمة", "بتتشطب."], "accent": ["بتتشطب."], "widget": { "kind": "crossed", "steps": [3.6], "badge": "خلاص" } },
+    { "from": 5.2, "face": "hidden", "caption": ["ومكانها", "الجديدة."], "accent": ["الجديدة."], "widget": { "kind": "tiles", "from": "notebook", "to": "logo", "steps": [5.5, 6.6], "badge": "✓ كل يوم" } },
+    { "from": 7.8, "face": "hidden", "caption": ["الأرقام", "بتعدّ قدامك."], "accent": ["بتعدّ"], "widget": { "kind": "counter", "header": "الشهر ده", "to": 4800, "unit": "جنيه", "badge": "✓ اتحسب" } },
+    { "from": 10.4, "face": "hidden", "caption": ["والخط", "بيطلع."], "accent": ["بيطلع."], "widget": { "kind": "chart", "header": "المتابعين", "points": [18, 26, 24, 41, 58, 80], "badge": "+٣٤٠" } },
+    { "from": 13, "face": "hidden", "caption": ["والخطوات", "بتتعلّم واحدة واحدة."], "accent": ["واحدة"], "widget": { "kind": "steps", "header": "الأسبوع ده", "labels": ["س", "ح", "ن", "ث", "ر", "خ", "ج"] } },
+    { "from": 15.6, "face": "hidden", "caption": ["والمميزات", "بتنوّر."], "accent": ["بتنوّر."], "widget": { "kind": "icons", "icons": ["clock", "money", "people"], "labels": ["وقت", "فلوس", "ناس"], "badge": "كله في مكان واحد" } },
+    { "from": 18.2, "face": "hidden", "caption": ["وفي الآخر", "زرار واحد."], "accent": ["زرار"], "widget": { "kind": "button", "label": "ابدأ", "done": "✓ تمام", "steps": [19.6] } },
+    { "from": 20.8, "face": "hidden", "caption": ["سجّل نفسك،", "والباقي علينا."], "accent": ["علينا."], "widget": { "kind": "logo", "title": "talk-video", "badge": "جرّبها" } }
+  ]
+}

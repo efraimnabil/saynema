@@ -1,0 +1,15 @@
+{
+  "clip": null,
+  "seconds": 24,
+  "scenes": [
+    { "from": 0, "face": "hidden", "caption": ["Every sentence you say", "gets a picture."], "accent": ["picture."], "widget": { "kind": "question", "text": "?" } },
+    { "from": 2.6, "face": "hidden", "caption": ["The old way", "gets crossed out."], "accent": ["crossed"], "widget": { "kind": "crossed", "steps": [3.6], "badge": "Done with it" } },
+    { "from": 5.2, "face": "hidden", "caption": ["The new way", "takes its place."], "accent": ["new"], "widget": { "kind": "tiles", "from": "notebook", "to": "logo", "steps": [5.5, 6.6], "badge": "✓ Every day" } },
+    { "from": 7.8, "face": "hidden", "caption": ["Numbers", "count up."], "accent": ["count"], "widget": { "kind": "counter", "header": "This month", "to": 4800, "unit": "$", "badge": "✓ Tracked" } },
+    { "from": 10.4, "face": "hidden", "caption": ["Lines", "go up."], "accent": ["up."], "widget": { "kind": "chart", "header": "Followers", "points": [18, 26, 24, 41, 58, 80], "badge": "+340" } },
+    { "from": 13, "face": "hidden", "caption": ["Steps tick", "one by one."], "accent": ["one"], "widget": { "kind": "steps", "header": "This week", "labels": ["M", "T", "W", "T", "F", "S", "S"] } },
+    { "from": 15.6, "face": "hidden", "caption": ["Features", "light up."], "accent": ["light"], "widget": { "kind": "icons", "icons": ["clock", "money", "people"], "labels": ["Time", "Money", "People"], "badge": "All in one place" } },
+    { "from": 18.2, "face": "hidden", "caption": ["And at the end,", "one button."], "accent": ["button."], "widget": { "kind": "button", "label": "Start", "done": "✓ Done", "steps": [19.6] } },
+    { "from": 20.8, "face": "hidden", "caption": ["Record yourself.", "We do the rest."], "accent": ["rest."], "widget": { "kind": "logo", "title": "talk-video", "badge": "Try it" } }
+  ]
+}

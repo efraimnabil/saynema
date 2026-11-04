@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Recording studio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap">
+<style>
+  :root { --bg:#131313; --card:#1d1d1d; --line:#2e2e2e; --fg:#f2f2f2; --dim:#9a9a9a; --acc:#e9a777; --ok:#6fcf8a; --warn:#f0c060; --bad:#e06060; }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--bg); color:var(--fg); font-family:Cairo, system-ui, sans-serif; height:100vh; overflow:hidden;
+         display:grid; grid-template-rows:auto 1fr auto; }
+  /* The prompter sits at the top, right under the camera, so the eyes stay near the lens. */
+  #prompter { text-align:center; padding:14px 24px 10px; border-bottom:1px solid var(--line); min-height:120px }
+  #pIdea { font-size:44px; font-weight:800; line-height:1.25 }
+  #pIdea b { color:var(--acc) }
+  #pSays { font-size:20px; color:var(--dim); margin-top:4px }
+  #pPos { font-size:14px; color:var(--dim); margin-top:2px; letter-spacing:.05em }
+  main { display:grid; grid-template-columns:1fr 330px; gap:16px; padding:14px 16px; min-height:0 }
+  #stage { position:relative; background:#000; border-radius:14px; overflow:hidden; display:flex; align-items:center; justify-content:center; min-height:0 }
+  #stage video, #stage canvas { position:absolute; max-width:100%; max-height:100%; aspect-ratio:16/9; width:100% }
+  #cam { transform:scaleX(-1) }
+  #guide { pointer-events:none }
+  #count { position:absolute; font-size:160px; font-weight:800; color:var(--acc); text-shadow:0 0 40px #000 }
+  #rec { position:absolute; top:12px; inset-inline-start:12px; background:var(--bad); color:#fff; padding:4px 12px; border-radius:20px; font-weight:800; display:none }
+  aside { display:flex; flex-direction:column; gap:12px; overflow:auto; min-height:0 }
+  .box { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px }
+  .box h3 { margin:0 0 8px; font-size:15px; color:var(--acc) }
+  select { width:100%; background:#111; color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:6px; font-family:inherit; margin-bottom:6px }
+  .meter { height:12px; background:#0c0c0c; border-radius:6px; overflow:hidden; margin:4px 0 2px }
+  .meter i { display:block; height:100%; width:0; background:var(--ok); transition:width .08s }
+  .note { font-size:13px; color:var(--dim) }
+  .state { font-weight:800 }
+  ul { margin:0; padding-inline-start:18px; font-size:14px; line-height:1.8 }
+  li { cursor:pointer }
+  li.done { color:var(--dim); text-decoration:line-through }
+  footer { display:flex; gap:12px; align-items:center; justify-content:center; padding:10px 16px 14px; border-top:1px solid var(--line) }
+  button { font-family:inherit; font-size:18px; font-weight:800; border:0; border-radius:12px; padding:10px 22px; cursor:pointer; background:#262626; color:var(--fg) }
+  button.main { background:var(--acc); color:#1a1a1a }
+  button.stop { background:var(--bad); color:#fff }
+  kbd { font-family:inherit; background:#262626; border-radius:4px; padding:0 6px; font-size:12px }
+  #last { width:100%; border-radius:8px; margin-top:6px; display:none; transform:scaleX(-1) }
+</style>
+</head>
+<body>
+<section id="prompter">
+  <div id="pIdea"></div>
+  <div id="pSays"></div>
+  <div id="pPos"></div>
+</section>
+
+<main>
+  <div id="stage">
+    <video id="cam" autoplay muted playsinline></video>
+    <canvas id="guide"></canvas>
+    <div id="count"></div>
+    <div id="rec">● REC <span id="clock">0:00</span></div>
+  </div>
+  <aside>
+    <div class="box">
+      <h3 data-t="devices"></h3>
+      <select id="vSel"></select>
+      <select id="aSel"></select>
+      <div class="note" id="res"></div>
+    </div>
+    <div class="box">
+      <h3 data-t="light"></h3>
+      <div class="meter"><i id="lMeter"></i></div>
+      <div class="state" id="lState">…</div>
+    </div>
+    <div class="box">
+      <h3 data-t="sound"></h3>
+      <div class="meter"><i id="aMeter"></i></div>
+      <div class="state" id="aState"></div>
+    </div>
+    <div class="box">
+      <h3 data-t="before"></h3>
+      <ul id="check"></ul>
+    </div>
+    <div class="box">
+      <h3 data-t="takesTitle"></h3>
+      <div class="note" id="folder"></div>
+      <div id="takes" class="note"></div>
+      <video id="last" controls playsinline></video>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  <button id="btn" class="main"></button>
+  <button id="prev"></button>
+  <button id="next"></button>
+</footer>
+
+<script>
+// ---------- words (Arabic and English) ----------
+const T = {
+  en: {
+    dir: "ltr", ready: "Get ready… then press «Start recording»", keys: "Space starts and stops · Enter for the next idea",
+    devices: "Camera and mic", light: "Light on your face", sound: "Sound", before: "Before you start (tap each when done)", takesTitle: "Takes",
+    start: "Start recording", stop: "Stop recording", prev: "Previous", next: "Next", none: "None yet", saving: "Saving…", savedIn: "Saved in: ",
+    ideas: (n, t) => `${n} ideas · take ${t}`, needCam: "The page needs camera and mic access",
+    loud: "Too loud: move back or speak softer", clip: "Clipping! Lower the mic gain or move back", ok: "Good", low: "Too low: move closer to the mic", quiet: "Quiet… say something so I can measure",
+    noise: "Background noise: turn off fans or AC if you can",
+    backlit: "The light is behind you: turn to face it", dark: "Too dark: put a lamp or window in front of you", bright: "Too bright: move the lamp back a little",
+    headHere: "Top of your head here", inCard: "This part shows in the card", eyes: "Eyes about on this line",
+    checks: ["Turn off camera effects (Center Stage, Portrait, background blur)", "Camera at eye level (books or a stand under the laptop)", "Light (window or lamp) in front of you, not behind", "A plain wall behind you, a different colour from your clothes and hair", "Head touches the green band, body inside the box", "Close Teams, Zoom and anything else using the mic", "A quiet room: fans and AC off if you can"],
+  },
+  ar: {
+    dir: "rtl", ready: "جهّز نفسك… وبعدين دوس «ابدأ التسجيل»", keys: "Space يبدأ ويوقّف التسجيل · Enter للفكرة اللي بعدها",
+    devices: "الكاميرا والمايك", light: "النور على وشّك", sound: "الصوت", before: "قبل ما تبدأ (دوس على الحاجة لما تخلصها)", takesTitle: "التسجيلات",
+    start: "ابدأ التسجيل", stop: "وقّف التسجيل", prev: "اللي قبلها", next: "اللي بعدها", none: "لسه مفيش", saving: "بيتحفظ…", savedIn: "بتتحفظ في: ",
+    ideas: (n, t) => `${n} أفكار · التسجيل رقم ${t}`, needCam: "محتاج إذن الكاميرا والمايك",
+    loud: "عالي قوي، بعّد شوية أو وطّي صوتك", clip: "الصوت بيقطّع! وطّي المايك أو بعّد", ok: "تمام", low: "واطي، قرّب من المايك", quiet: "ساكت… اتكلم عشان أقيس",
+    noise: "فيه دوشة في الخلفية، اقفل المروحة أو التكييف لو ينفع",
+    backlit: "النور ورا منك، لفّ ووشّك للنور", dark: "غامق، قرّب لمبة أو شباك قدام وشك", bright: "النور جامد، بعّد اللمبة شوية",
+    headHere: "أعلى راسك هنا", inCard: "ده اللي هيبان في الكارت", eyes: "عينك تقريبًا على الخط ده",
+    checks: ["اقفل مؤثرات الكاميرا (Center Stage و Portrait وتغبيش الخلفية)", "الكاميرا في مستوى عينك (كتب أو حامل تحت اللابتوب)", "النور (شباك أو لمبة) قدام وشك، مش وراك", "حيطة ساده وراك، لونها غير لون هدومك وشعرك", "راسك تلمس الشريط الأخضر، وجسمك جوه المربع", "اقفل Teams و Zoom وأي برنامج بيستخدم المايك", "أوضة هادية: مروحة وتكييف مقفولين لو ينفع"],
+  },
+};
+let L = T.en;
+function applyLang(lang) {
+  L = T[lang] ?? T.en;
+  document.documentElement.lang = lang in T ? lang : "en";
+  document.documentElement.dir = L.dir;
+  document.querySelectorAll("[data-t]").forEach((e) => (e.textContent = L[e.dataset.t]));
+  $("pIdea").textContent = L.ready; $("pSays").textContent = L.keys; $("aState").textContent = L.quiet;
+  $("check").innerHTML = ""; L.checks.forEach((c) => { const li = document.createElement("li"); li.textContent = c; li.onclick = () => li.classList.toggle("done"); $("check").append(li); });
+  $("takes").textContent = L.none; setButtons();
+}
+function setButtons() {
+  const rtl = L.dir === "rtl";
+  $("btn").innerHTML = `${recording ? L.stop : L.start} <kbd>Space</kbd>`;
+  $("prev").innerHTML = rtl ? `→ ${L.prev} <kbd>→</kbd>` : `← ${L.prev} <kbd>←</kbd>`;
+  $("next").innerHTML = rtl ? `${L.next} ← <kbd>Enter</kbd>` : `${L.next} → <kbd>Enter</kbd>`;
+}
+
+const $ = (id) => document.getElementById(id);
+const cam = $("cam"), guide = $("guide");
+let counting = false, stream, beats = [], beat = -1, recorder, chunks = [], marks = [], t0 = 0, take = 1, mime = "", recording = false;
+applyLang(navigator.language?.startsWith("ar") ? "ar" : "en");
+
+// ---------- ideas ----------
+fetch("/beats").then((r) => r.json()).then((d) => {
+  applyLang(d.lang);
+  beats = d.beats; take = d.next;
+  // Takes live on disk, so a refresh still lists them.
+  if (d.takes.length) { $("takes").dataset.list = d.takes.map((n) => `✓ ${n}`).join("<br>"); $("takes").innerHTML = $("takes").dataset.list; }
+  $("folder").textContent = L.savedIn + d.folder;
+  $("pPos").textContent = `${d.id} · ${L.ideas(beats.length, take)}`;
+  show(0);
+});
+function show(i) {
+  beat = Math.max(0, Math.min(beats.length - 1, i));
+  const b = beats[beat]; if (!b) return;
+  const esc = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+  $("pIdea").innerHTML = esc(b.idea).replace(/(\S+)$/, "<b>$1</b>");
+  $("pSays").textContent = b.hint;
+  $("pPos").textContent = `${beat + 1} / ${beats.length}`;
+  if (recording) marks.push({ beat: b.n, t: +((performance.now() - t0) / 1000).toFixed(2) });
+}
+
+// ---------- devices ----------
+async function start(vId, aId) {
+  stream?.getTracks().forEach((t) => t.stop());
+  stream = await navigator.mediaDevices.getUserMedia({
+    video: { deviceId: vId ? { exact: vId } : undefined, width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } },
+    // Natural voice: no auto gain, no echo cancelling (it is levelled later).
+    audio: { deviceId: aId ? { exact: aId } : undefined, echoCancellation: false, autoGainControl: false, noiseSuppression: false, channelCount: 1, sampleRate: 48000 },
+  });
+  cam.srcObject = stream;
+  const s = stream.getVideoTracks()[0].getSettings();
+  $("res").textContent = `${s.width}×${s.height} · ${Math.round(s.frameRate)} fps`;
+  listDevices(); listenAudio();
+}
+async function listDevices() {
+  const ds = await navigator.mediaDevices.enumerateDevices();
+  const cur = (k) => stream.getTracks().find((t) => t.kind === k)?.getSettings().deviceId;
+  for (const [sel, kind] of [[$("vSel"), "videoinput"], [$("aSel"), "audioinput"]]) {
+    sel.innerHTML = "";
+    ds.filter((d) => d.kind === kind).forEach((d) => sel.add(new Option(d.label || kind, d.deviceId, false, d.deviceId === cur(kind.startsWith("video") ? "video" : "audio"))));
+  }
+}
+$("vSel").onchange = () => start($("vSel").value, $("aSel").value);
+$("aSel").onchange = () => start($("vSel").value, $("aSel").value);
+
+// ---------- sound meter: level, clipping, and the noise floor while silent ----------
+let analyser;
+function listenAudio() {
+  const ac = new AudioContext();
+  analyser = ac.createAnalyser(); analyser.fftSize = 2048;
+  ac.createMediaStreamSource(stream).connect(analyser);
+}
+let peakHold = -90, loudSeen = 0, clipSeen = 0, floor = -90;
+function audioTick() {
+  if (!analyser) return;
+  const a = new Float32Array(analyser.fftSize); analyser.getFloatTimeDomainData(a);
+  let pk = 0, sq = 0; for (const v of a) { pk = Math.max(pk, Math.abs(v)); sq += v * v; }
+  const db = 20 * Math.log10(pk + 1e-6), rms = 10 * Math.log10(sq / a.length + 1e-12);
+  if (pk > 0.98) clipSeen = performance.now();
+  peakHold = Math.max(db, peakHold - 0.6);
+  // the quietest stretch seen lately is the room's noise
+  floor = Math.min(rms, floor + 0.02);
+  const w = Math.max(0, Math.min(100, (peakHold + 60) / 60 * 100));
+  const m = $("aMeter"); m.style.width = w + "%";
+  if (db > -40) loudSeen = performance.now();
+  let txt, c;
+  if (performance.now() - clipSeen < 1500) { txt = L.clip; c = "var(--bad)"; }
+  else if (peakHold > -1.5) { txt = L.loud; c = "var(--bad)"; }
+  else if (floor > -45 && performance.now() - loudSeen > 1500) { txt = L.noise; c = "var(--warn)"; }
+  else if (peakHold > -24) { txt = L.ok; c = "var(--ok)"; }
+  else if (performance.now() - loudSeen < 1500) { txt = L.low; c = "var(--warn)"; }
+  else { txt = L.quiet; c = "var(--dim)"; }
+  m.style.background = c; $("aState").textContent = txt; $("aState").style.color = c;
+}
+
+// ---------- framing guide + light meter ----------
+// The source is 16:9. The face card shows a 4:3 crop, 80 % of the height,
+// bottom-aligned; the head must reach above that crop (green band) so it can
+// pop out over the card's edge.
+const probe = document.createElement("canvas"); probe.width = 64; probe.height = 36;
+const pctx = probe.getContext("2d", { willReadFrequently: true });
+function drawGuide() {
+  const r = cam.getBoundingClientRect(); guide.width = r.width; guide.height = r.height;
+  const k = Math.min(r.width / 16, r.height / 9), PW = 16 * k, H = 9 * k;
+  const x0 = (r.width - PW) / 2, y0 = (r.height - H) / 2, W = r.width, g = guide.getContext("2d");
+  g.clearRect(0, 0, W, r.height);
+  const ch = H * 0.8, cw = ch * 4 / 3, cx = x0 + (PW - cw) / 2, cy = y0 + H - ch;
+  g.strokeStyle = "rgba(233,167,119,.9)"; g.lineWidth = 2; g.setLineDash([8, 6]);
+  g.strokeRect(cx, cy, cw, ch);
+  g.fillStyle = "rgba(111,207,138,.18)"; g.fillRect(cx, y0 + H * 0.04, cw, H * 0.15);
+  g.setLineDash([]); g.fillStyle = "rgba(111,207,138,.95)"; g.font = "600 15px Cairo, system-ui";
+  g.textAlign = "center"; g.fillText(L.headHere, W / 2, y0 + H * 0.04 + 20);
+  g.fillStyle = "rgba(233,167,119,.95)"; g.fillText(L.inCard, W / 2, cy + ch - 12);
+  g.strokeStyle = "rgba(255,255,255,.25)"; g.beginPath(); g.moveTo(cx, y0 + H * 0.38); g.lineTo(cx + cw, y0 + H * 0.38); g.stroke();
+  g.fillStyle = "rgba(255,255,255,.5)"; g.fillText(L.eyes, W / 2, y0 + H * 0.38 - 8);
+}
+function lightTick() {
+  if (!cam.videoWidth) return;
+  pctx.drawImage(cam, 0, 0, 64, 36);
+  const px = pctx.getImageData(0, 0, 64, 36).data;
+  const lum = (x0, x1, y0, y1) => { let s = 0, n = 0; for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) { const i = (y * 64 + x) * 4; s += 0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]; n++; } return s / n; };
+  const face = lum(26, 38, 10, 22), back = (lum(2, 12, 2, 10) + lum(52, 62, 2, 10)) / 2;
+  const m = $("lMeter"); m.style.width = Math.min(100, face / 2.2) + "%";
+  let txt, c;
+  if (back > face + 35) { txt = L.backlit; c = "var(--bad)"; }
+  else if (face < 80) { txt = L.dark; c = "var(--warn)"; }
+  else if (face > 215) { txt = L.bright; c = "var(--warn)"; }
+  else { txt = L.ok; c = "var(--ok)"; }
+  m.style.background = c; $("lState").textContent = txt; $("lState").style.color = c;
+}
+function loop() { audioTick(); requestAnimationFrame(loop); }
+setInterval(lightTick, 300);
+
+// ---------- recording ----------
+function pickMime() {
+  for (const m of ["video/mp4;codecs=avc1.640028,mp4a.40.2", "video/mp4;codecs=avc1,mp4a.40.2", "video/mp4", "video/webm;codecs=vp9,opus", "video/webm"])
+    if (MediaRecorder.isTypeSupported(m)) return m;
+  return "";
+}
+async function begin() {
+  if (counting) return; counting = true;
+  for (const n of [3, 2, 1]) { $("count").textContent = n; await new Promise((r) => setTimeout(r, 800)); }
+  $("count").textContent = ""; counting = false;
+  mime = pickMime(); chunks = []; marks = [];
+  recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 14_000_000, audioBitsPerSecond: 192_000 });
+  recorder.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+  recorder.onstop = save;
+  recorder.start(1000); t0 = performance.now(); recording = true;
+  $("rec").style.display = "block"; $("btn").className = "stop"; setButtons();
+  marks.push({ beat: beats[beat]?.n ?? 1, t: 0 });
+}
+function end() {
+  recording = false; recorder.stop();
+  $("rec").style.display = "none"; $("btn").className = "main"; setButtons();
+}
+async function save() {
+  const blob = new Blob(chunks, { type: mime });
+  const ext = mime.includes("mp4") ? "mp4" : "webm";
+  $("takes").textContent = L.saving;
+  const q = new URLSearchParams({ ext, take, marks: JSON.stringify({ mime, beats: marks, seconds: +((performance.now() - t0) / 1000).toFixed(1) }) });
+  const r = await fetch("/save?" + q, { method: "POST", body: blob }).then((x) => x.json());
+  const prev = $("takes").dataset.list ? $("takes").dataset.list + "<br>" : "";
+  $("takes").dataset.list = prev + `✓ ${r.name}`;
+  $("takes").innerHTML = $("takes").dataset.list;
+  take = r.next;
+  const v = $("last"); v.src = URL.createObjectURL(blob); v.style.display = "block";
+}
+setInterval(() => { if (recording) { const s = Math.floor((performance.now() - t0) / 1000); $("clock").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; } }, 250);
+
+$("btn").onclick = () => (recording ? end() : begin());
+$("next").onclick = () => show(beat + 1);
+$("prev").onclick = () => show(beat - 1);
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "SELECT") return;
+  const rtl = L.dir === "rtl";
+  const fwd = rtl ? "ArrowLeft" : "ArrowRight", back = rtl ? "ArrowRight" : "ArrowLeft";
+  if (e.code === "Space") { e.preventDefault(); if (e.repeat || counting) return; recording ? end() : begin(); }
+  else if (e.key === "Enter" || e.key === fwd) { e.preventDefault(); show(beat + 1); }
+  else if (e.key === back) { e.preventDefault(); show(beat - 1); }
+});
+document.querySelectorAll("button").forEach((b) => b.addEventListener("mouseup", () => b.blur()));
+window.addEventListener("resize", drawGuide);
+cam.addEventListener("loadedmetadata", drawGuide);
+start().catch((e) => { $("pIdea").textContent = L.needCam; $("pSays").textContent = e.message; });
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
