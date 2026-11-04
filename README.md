@@ -16,7 +16,7 @@ Works in **Arabic and English** (and any language the transcriber knows), on
 In Claude Code:
 
 ```
-/plugin marketplace add yamistro/talk-video
+/plugin marketplace add efraimnabil/talk-video
 /plugin install talk-video@yamistro
 ```
 
@@ -86,7 +86,7 @@ plugin لـ Claude Code: بتتكلم قدام كاميرا اللابتوب، �
 **التنصيب:** جوه Claude Code اكتب السطرين دول، وبعدهم `/talk-video:setup`:
 
 ```
-/plugin marketplace add yamistro/talk-video
+/plugin marketplace add efraimnabil/talk-video
 /plugin install talk-video@yamistro
 ```
 
