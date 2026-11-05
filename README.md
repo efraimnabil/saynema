@@ -13,14 +13,30 @@ Works in **Arabic and English** (and any language the transcriber knows), on
 
 ## Install
 
-In Claude Code:
+**Claude Code in a terminal:**
 
 ```
 /plugin marketplace add efraimnabil/talk-video
 /plugin install talk-video@yamistro
 ```
 
-Then:
+**Claude Desktop (the Code tab):** run these two lines once in your computer's
+terminal (Terminal on macOS, PowerShell on Windows). If `claude` isn't found,
+install Claude Code first from [claude.com/claude-code](https://claude.com/claude-code).
+
+```bash
+claude plugin marketplace add efraimnabil/talk-video
+claude plugin install talk-video@yamistro
+```
+
+Then start a new session in the Code tab.
+
+> **Where it works:** Claude Code only (the terminal, or the Code tab in
+> Claude Desktop). It does **not** work in the normal chat on claude.ai or in
+> Claude Desktop, or in Claude Code on the web: those run in the cloud and
+> can't reach your camera, your files or your computer's tools.
+
+Then, in a session:
 
 ```
 /talk-video:setup
@@ -89,6 +105,15 @@ plugin لـ Claude Code: بتتكلم قدام كاميرا اللابتوب، �
 /plugin marketplace add efraimnabil/talk-video
 /plugin install talk-video@yamistro
 ```
+
+**لو بتستخدم Claude Desktop (تاب Code):** اكتب السطرين دول مرة واحدة في Terminal الجهاز (على الماك Terminal، وعلى الويندوز PowerShell). وبعدها افتح جلسة جديدة في تاب Code:
+
+```bash
+claude plugin marketplace add efraimnabil/talk-video
+claude plugin install talk-video@yamistro
+```
+
+**شغال فين؟** في Claude Code بس: يا من الـ terminal، يا من تاب Code في Claude Desktop. مش شغال في الشات العادي على claude.ai أو في Claude Desktop، ولا في Claude Code على الويب، لأن دول بيشتغلوا على سيرفر ومش بيوصلوا للكاميرا ولا لملفات جهازك.
 
 **فيديو جديد:** `/talk-video:new` وبعدها موضوعك. Claude هيكتب لك نقط قصيرة تتكلم عليها بطريقتك (مش سكريبت)، ويفتح لك الاستوديو. المسافة (Space) بتبدأ التسجيل وتوقّفه، وEnter بتجيب الفكرة اللي بعدها. ولما تخلّص اكتب `/talk-video:make` واسم الفيديو.
 
