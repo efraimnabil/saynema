@@ -1,8 +1,8 @@
 {
-  "name": "talk-video-studio",
-  "version": "0.2.0",
+  "name": "saynema-studio",
+  "version": "0.3.0",
   "private": true,
-  "description": "Talking-head videos with a pop-out head and one widget per sentence. Made by the talk-video Claude Code plugin.",
+  "description": "Talking-head videos with a pop-out head and one widget per sentence. Made by the saynema Claude Code plugin.",
   "type": "module",
   "engines": {
     "node": ">=20.19.0"

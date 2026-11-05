@@ -3,7 +3,7 @@
 //
 //   node scripts/transcribe.mjs <id>
 //
-// Provider from talkvideo.config.json:
+// Provider from saynema.config.json:
 //   "elevenlabs"  ElevenLabs Scribe (paid, best on Arabic dialects; ELEVENLABS_API_KEY in .env)
 //   "whisper"     faster-whisper on this computer (free, private; needs uv)
 //

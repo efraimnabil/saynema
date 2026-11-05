@@ -4,7 +4,7 @@
 //   node <plugin>/engine/scripts/init.mjs <studio folder> --language ar --transcriber elevenlabs --cutout apple
 //   node <plugin>/engine/scripts/init.mjs <studio folder>      (update: keeps the earlier choices)
 //
-// Copies the template, writes talkvideo.config.json, and creates brand.json,
+// Copies the template, writes saynema.config.json, and creates brand.json,
 // .env and the example only when they don't exist yet, so running it again
 // upgrades the template without touching the person's own files or videos.
 import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -13,11 +13,12 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const engine = join(dirname(fileURLToPath(import.meta.url)), "..");
-const target = resolve(process.argv[2] ?? "talk-video-studio");
+const target = resolve(process.argv[2] ?? "saynema-studio");
 const arg = (k, d) => (process.argv.includes(k) ? process.argv[process.argv.indexOf(k) + 1] : d);
 // Running it again (an update) keeps the earlier choices unless a flag changes one.
-const cfgFile = join(target, "talkvideo.config.json");
-const old = existsSync(cfgFile) ? JSON.parse(readFileSync(cfgFile, "utf8")) : {};
+const cfgFile = join(target, "saynema.config.json");
+const legacy = join(target, "talkvideo.config.json"); // studios made before the rename
+const old = existsSync(cfgFile) ? JSON.parse(readFileSync(cfgFile, "utf8")) : existsSync(legacy) ? JSON.parse(readFileSync(legacy, "utf8")) : {};
 const language = arg("--language", old.language ?? "en");
 const transcriber = arg("--transcriber", old.transcriber ?? "whisper");
 const cutout = arg("--cutout", old.cutout ?? (process.platform === "darwin" ? "apple" : "mediapipe"));
@@ -40,7 +41,7 @@ brand.direction = rtl ? "rtl" : "ltr";
 brand.digits = language === "ar" ? "arabic" : "latin";
 brand.font = rtl ? "Cairo" : "Inter";
 once("brand.json", JSON.stringify(brand, null, 2) + "\n");
-once(".env", "# Secrets for talk-video. Never commit or share this file.\nELEVENLABS_API_KEY=\n");
+once(".env", "# Secrets for saynema. Never commit or share this file.\nELEVENLABS_API_KEY=\n");
 once(".gitignore", "node_modules/\n.env\npublic/clips/\nvideos/*/takes/\nvideos/*/out/\nvideos/*/mask.mp4\nvideos/*/.parts/\n");
 mkdirSync(join(target, "videos", "example"), { recursive: true });
 once("videos/example/video.json", readFileSync(join(engine, "examples", language === "ar" ? "video.ar.json" : "video.en.json"), "utf8"));
@@ -53,5 +54,5 @@ const cfg = { ...old, language, transcriber, cutout, whisperModel: old.whisperMo
 writeFileSync(cfgFile, JSON.stringify(cfg, null, 2) + "\n");
 
 // Remember where the studio is, so a new Claude session can find it.
-writeFileSync(join(homedir(), ".talk-video.json"), JSON.stringify({ studio: target }, null, 2) + "\n");
+writeFileSync(join(homedir(), ".saynema.json"), JSON.stringify({ studio: target }, null, 2) + "\n");
 console.log(JSON.stringify({ studio: target, config: cfg, next: `cd "${target}" && npm install && node scripts/doctor.mjs` }));

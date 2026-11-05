@@ -9,7 +9,7 @@ import { BRAND, LOOK, alpha, appear, bigNum, clamp01, easeOut, glow, num } from 
  * (from the scene start) of spoken words it reacts to.
  *
  * Every word a widget shows comes from its props, so it works in any language.
- * The catalogue for Claude is skills/talk-video/references/widgets.md; keep the
+ * The catalogue for Claude is skills/saynema/references/widgets.md; keep the
  * two in step.
  */
 export type WidgetProps = { f: number; d: number; fps: number; steps: number[]; p: Record<string, unknown> };

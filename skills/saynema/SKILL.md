@@ -1,11 +1,11 @@
 ---
-name: talk-video
-description: Makes a vertical talking-head video (Reels, TikTok, Shorts) from the user recording themselves - their head pops out of a card and every sentence gets an animated widget. Covers setup (Remotion, transcription, cutout), writing talking points, the recording studio, picking takes and cutting fillers, the cutout, the scenes, and the render. Use when the user wants to set up talk-video, make or edit a talking-head / face-to-camera video, record themselves for a video, or asks for "a video like that one with my head popping out".
+name: saynema
+description: Makes a vertical talking-head video (Reels, TikTok, Shorts) from the user recording themselves - their head pops out of a card and every sentence gets an animated widget. Covers setup (Remotion, transcription, cutout), writing talking points, the recording studio, picking takes and cutting fillers, the cutout, the scenes, and the render. Use when the user wants to set up saynema, make or edit a talking-head / face-to-camera video, record themselves for a video, or asks for "a video like that one with my head popping out".
 argument-hint: "[setup | doctor | new <topic> | make <id>]"
 allowed-tools: Bash(npm run *)
 ---
 
-# talk-video
+# saynema
 
 The user talks to their camera; you turn the takes into a finished 1080×1920
 video. Their words drive everything: each sentence becomes a scene with a
@@ -21,15 +21,15 @@ Keep the jargon out: say "cut-out", not "segmentation matte".
   levels up.) **The engine** (template, scripts, recorder) is `PLUGIN/engine`;
   call it `ENGINE`.
 - **The studio** is the user's own folder, made from the engine by setup.
-  Its path is in `~/.talk-video.json` (`{"studio": "..."}`). Call it `STUDIO`.
+  Its path is in `~/.saynema.json` (`{"studio": "..."}`). Call it `STUDIO`.
   Every `npm run …` below runs inside `STUDIO`.
 - One video = `STUDIO/videos/<id>/`: `beats.md` → `takes/` → `transcripts/` →
   `edit.json` → `video.json` → `out/<id>.mp4`. Its media for rendering is in
   `STUDIO/public/clips/<id>/`.
 
-If `~/.talk-video.json` is missing or its folder is gone, run **Setup** first.
+If `~/.saynema.json` is missing or its folder is gone, run **Setup** first.
 **Before any work in the studio**, compare `templateVersion` in
-`STUDIO/talkvideo.config.json` with `version` in `PLUGIN/.claude-plugin/plugin.json`.
+`STUDIO/saynema.config.json` with `version` in `PLUGIN/.claude-plugin/plugin.json`.
 If they differ or `templateVersion` is missing, the plugin was updated but the
 studio still runs the old template: tell the user in one line and update the
 studio first (Setup, update path; it keeps their videos, brand and key).
@@ -50,7 +50,7 @@ studio first (Setup, update path; it keeps their videos, brand and key).
 6. **Secrets stay out of the chat.** API keys go in `STUDIO/.env`, typed by
    the user. Never ask them to paste a key into the conversation, never print one.
 
-## Setup (`/talk-video:setup`)
+## Setup (`/saynema:setup`)
 
 Read [references/setup.md](references/setup.md) and follow it. In short:
 detect what's installed, ask everything in **one** `AskUserQuestion` call
@@ -59,14 +59,14 @@ detect what's installed, ask everything in **one** `AskUserQuestion` call
 `node ENGINE/scripts/init.mjs`, `npm install`, `npm run doctor -- --plugin "PLUGIN"`, set the brand,
 and show the example video's stills so they see a result in minutes.
 
-## Doctor (`/talk-video:doctor`)
+## Doctor (`/saynema:doctor`)
 
 `npm run doctor -- --json --plugin "PLUGIN"` in `STUDIO`. Explain each ✗ in one plain line with
 its fix. Don't install anything without the user's go-ahead.
 
 ## Make a video
 
-### 1. Ideas (`/talk-video:new <topic>`)
+### 1. Ideas (`/saynema:new <topic>`)
 
 Ask what the video is about, who it's for, and what the viewer should do at
 the end (follow, comment, visit, message). Ask for any facts you'll need

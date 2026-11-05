@@ -10,6 +10,6 @@
     { "from": 13, "face": "hidden", "caption": ["Steps tick", "one by one."], "accent": ["one"], "widget": { "kind": "steps", "header": "This week", "labels": ["M", "T", "W", "T", "F", "S", "S"] } },
     { "from": 15.6, "face": "hidden", "caption": ["Features", "light up."], "accent": ["light"], "widget": { "kind": "icons", "icons": ["clock", "money", "people"], "labels": ["Time", "Money", "People"], "badge": "All in one place" } },
     { "from": 18.2, "face": "hidden", "caption": ["And at the end,", "one button."], "accent": ["button."], "widget": { "kind": "button", "label": "Start", "done": "✓ Done", "steps": [19.6] } },
-    { "from": 20.8, "face": "hidden", "caption": ["Record yourself.", "We do the rest."], "accent": ["rest."], "widget": { "kind": "logo", "title": "talk-video", "badge": "Try it" } }
+    { "from": 20.8, "face": "hidden", "caption": ["Record yourself.", "We do the rest."], "accent": ["rest."], "widget": { "kind": "logo", "title": "Saynema", "badge": "Try it" } }
   ]
 }

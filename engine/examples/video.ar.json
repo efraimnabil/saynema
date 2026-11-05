@@ -10,6 +10,6 @@
     { "from": 13, "face": "hidden", "caption": ["والخطوات", "بتتعلّم واحدة واحدة."], "accent": ["واحدة"], "widget": { "kind": "steps", "header": "الأسبوع ده", "labels": ["س", "ح", "ن", "ث", "ر", "خ", "ج"] } },
     { "from": 15.6, "face": "hidden", "caption": ["والمميزات", "بتنوّر."], "accent": ["بتنوّر."], "widget": { "kind": "icons", "icons": ["clock", "money", "people"], "labels": ["وقت", "فلوس", "ناس"], "badge": "كله في مكان واحد" } },
     { "from": 18.2, "face": "hidden", "caption": ["وفي الآخر", "زرار واحد."], "accent": ["زرار"], "widget": { "kind": "button", "label": "ابدأ", "done": "✓ تمام", "steps": [19.6] } },
-    { "from": 20.8, "face": "hidden", "caption": ["سجّل نفسك،", "والباقي علينا."], "accent": ["علينا."], "widget": { "kind": "logo", "title": "talk-video", "badge": "جرّبها" } }
+    { "from": 20.8, "face": "hidden", "caption": ["سجّل نفسك،", "والباقي علينا."], "accent": ["علينا."], "widget": { "kind": "logo", "title": "Saynema", "badge": "جرّبها" } }
   ]
 }

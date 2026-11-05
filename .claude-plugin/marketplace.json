@@ -8,7 +8,7 @@
   "description": "Claude Code plugins by Efraim Nabil",
   "plugins": [
     {
-      "name": "talk-video",
+      "name": "saynema",
       "source": "./",
       "description": "Talking-head videos with a pop-out head and one animated widget per sentence.",
       "license": "MIT",

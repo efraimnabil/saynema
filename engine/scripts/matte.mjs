@@ -3,7 +3,7 @@
 //
 //   node scripts/matte.mjs <id>
 //
-// Method from talkvideo.config.json "cutout":
+// Method from saynema.config.json "cutout":
 //   "apple"      macOS Vision person segmentation (no download, best edges)
 //   "mediapipe"  MediaPipe selfie segmenter, any OS (needs uv; downloads a 16 MB model once)
 // Writes public/clips/<id>/cutout.webm (VP9 with alpha) and adds headTop/headX
@@ -38,7 +38,7 @@ async function mediapipeModel() {
 const method = cfg.cutout ?? (process.platform === "darwin" ? "apple" : "mediapipe");
 console.log(`Cutting out the person with ${method} (about ${Math.ceil(seconds(talk) / (method === "apple" ? 20 : 10))} min)…`);
 if (method === "apple") {
-  if (process.platform !== "darwin") throw new Error('"apple" cutout only runs on macOS. Set "cutout": "mediapipe" in talkvideo.config.json.');
+  if (process.platform !== "darwin") throw new Error('"apple" cutout only runs on macOS. Set "cutout": "mediapipe" in saynema.config.json.');
   run("swift", [join(studio, "scripts", "matte-mac.swift"), talk, mask]);
 } else {
   run("uv", ["run", "--quiet", join(studio, "scripts", "matte.py"), talk, mask, await mediapipeModel()]);

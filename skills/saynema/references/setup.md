@@ -12,7 +12,7 @@ Run these and keep the answers (don't print them back as a wall of text):
 - ffmpeg: `ffmpeg -version` and whether `ffmpeg -hide_banner -encoders` lists `libvpx-vp9`
 - uv: `uv --version`
 - macOS only: `swift --version`
-- An existing studio: `~/.talk-video.json`. If it points to a folder that
+- An existing studio: `~/.saynema.json`. If it points to a folder that
   exists, this is most likely an **update** (the plugin was updated, or doctor
   said the template is old). Ask in one line: update that studio, or make a new
   one? To update, skip to step 4 and run `init.mjs` with only the folder: it
@@ -33,7 +33,7 @@ already obvious, e.g. no cutout question off macOS):
      dialects; downloads a 1.6 GB model once.
 3. **Cut-out** (macOS only) — Apple Vision *(recommended: built in, cleanest
    edges)* / MediaPipe (same as Windows and Linux). Off macOS it is always MediaPipe.
-4. **Studio folder** — `~/talk-video-studio` *(recommended)* / this folder.
+4. **Studio folder** — `~/saynema-studio` *(recommended)* / this folder.
 
 ## 3. Install only what's missing
 

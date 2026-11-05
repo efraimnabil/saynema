@@ -33,16 +33,16 @@ if (ff) {
 
 check("Studio packages installed", existsSync(join(studio, "node_modules", "remotion")), studio, `cd "${studio}" && npm install`);
 
-const cfgFile = join(studio, "talkvideo.config.json");
+const cfgFile = join(studio, "saynema.config.json");
 let cfg = null;
 try { cfg = JSON.parse(readFileSync(cfgFile, "utf8")); } catch { /* reported below */ }
 const pluginDir = process.argv.includes("--plugin") ? process.argv[process.argv.indexOf("--plugin") + 1] : null;
 if (pluginDir && cfg) {
   let latest = null;
   try { latest = JSON.parse(readFileSync(join(pluginDir, ".claude-plugin", "plugin.json"), "utf8")).version; } catch { /* no manifest: skip */ }
-  if (latest) check("Studio template up to date", cfg.templateVersion === latest, `studio ${cfg.templateVersion ?? "before 0.2.0"}, plugin ${latest}`, "Run /talk-video:setup again: it updates the template and keeps your videos, brand and settings");
+  if (latest) check("Studio template up to date", cfg.templateVersion === latest, `studio ${cfg.templateVersion ?? "before 0.2.0"}, plugin ${latest}`, "Run /saynema:setup again: it updates the template and keeps your videos, brand and settings");
 }
-check("talkvideo.config.json", cfg, cfg ? `language ${cfg.language}, transcriber ${cfg.transcriber}, cutout ${cfg.cutout}` : "missing or not valid JSON", "Run the plugin's setup again");
+check("saynema.config.json", cfg, cfg ? `language ${cfg.language}, transcriber ${cfg.transcriber}, cutout ${cfg.cutout}` : "missing or not valid JSON", "Run the plugin's setup again");
 
 if (cfg?.transcriber === "elevenlabs") {
   const key = secret("ELEVENLABS_API_KEY");
@@ -51,7 +51,7 @@ if (cfg?.transcriber === "elevenlabs") {
 const needUv = cfg?.transcriber === "whisper" || cfg?.cutout === "mediapipe";
 if (needUv) check("uv (runs the Python parts)", which("uv"), which("uv") ? version("uv") : "not found", FIX.uv[os]);
 if (cfg?.cutout === "apple") {
-  check("macOS for Apple cutout", os === "mac", os, 'Set "cutout": "mediapipe" in talkvideo.config.json');
+  check("macOS for Apple cutout", os === "mac", os, 'Set "cutout": "mediapipe" in saynema.config.json');
   if (os === "mac") check("Swift (Xcode command line tools)", which("swift"), which("swift") ? version("swift", ["--version"]) : "not found", FIX.swift.mac);
 }
 

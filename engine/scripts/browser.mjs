@@ -1,11 +1,11 @@
 // The browser Remotion renders with. Remotion's own headless Chrome is the
 // default; on macOS an installed Google Chrome is used instead, because the
 // downloaded shell crashes on some macOS versions ("icudtl.dat not found").
-// Set TALK_VIDEO_CHROME to force a path, or to "bundled" to use Remotion's.
+// Set SAYNEMA_CHROME to force a path, or to "bundled" to use Remotion's.
 import { existsSync } from "node:fs";
 
 export function browserExecutable() {
-  const forced = process.env.TALK_VIDEO_CHROME;
+  const forced = process.env.SAYNEMA_CHROME;
   if (forced === "bundled") return null;
   if (forced) return forced;
   if (process.platform !== "darwin") return null;

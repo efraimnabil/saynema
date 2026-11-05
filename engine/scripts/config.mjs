@@ -1,16 +1,16 @@
 // Shared paths and settings for every script. Scripts run from the studio
-// folder (where talkvideo.config.json is), on macOS, Windows or Linux.
+// folder (where saynema.config.json is), on macOS, Windows or Linux.
 import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const studio = join(dirname(fileURLToPath(import.meta.url)), "..");
-export const cacheDir = join(homedir(), ".cache", "talk-video");
+export const cacheDir = join(homedir(), ".cache", "saynema");
 
 export function config() {
-  const file = join(studio, "talkvideo.config.json");
-  if (!existsSync(file)) throw new Error(`No talkvideo.config.json in ${studio}. Run the plugin's setup first.`);
+  const file = join(studio, "saynema.config.json");
+  if (!existsSync(file)) throw new Error(`No saynema.config.json in ${studio}. Run the plugin's setup first.`);
   return JSON.parse(readFileSync(file, "utf8"));
 }
 
