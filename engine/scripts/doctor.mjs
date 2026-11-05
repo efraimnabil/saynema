@@ -2,6 +2,7 @@
 //
 //   node scripts/doctor.mjs          a readable list
 //   node scripts/doctor.mjs --json   the same, for Claude
+//   --plugin <plugin folder>         also check the studio's template is that plugin's version
 //
 // It never prints secrets: for an API key it only says whether one is set.
 import { existsSync, readFileSync } from "node:fs";
@@ -35,6 +36,12 @@ check("Studio packages installed", existsSync(join(studio, "node_modules", "remo
 const cfgFile = join(studio, "talkvideo.config.json");
 let cfg = null;
 try { cfg = JSON.parse(readFileSync(cfgFile, "utf8")); } catch { /* reported below */ }
+const pluginDir = process.argv.includes("--plugin") ? process.argv[process.argv.indexOf("--plugin") + 1] : null;
+if (pluginDir && cfg) {
+  let latest = null;
+  try { latest = JSON.parse(readFileSync(join(pluginDir, ".claude-plugin", "plugin.json"), "utf8")).version; } catch { /* no manifest: skip */ }
+  if (latest) check("Studio template up to date", cfg.templateVersion === latest, `studio ${cfg.templateVersion ?? "before 0.2.0"}, plugin ${latest}`, "Run /talk-video:setup again: it updates the template and keeps your videos, brand and settings");
+}
 check("talkvideo.config.json", cfg, cfg ? `language ${cfg.language}, transcriber ${cfg.transcriber}, cutout ${cfg.cutout}` : "missing or not valid JSON", "Run the plugin's setup again");
 
 if (cfg?.transcriber === "elevenlabs") {

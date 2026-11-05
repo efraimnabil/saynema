@@ -2,6 +2,7 @@
 // plugin's setup, from the plugin itself:
 //
 //   node <plugin>/engine/scripts/init.mjs <studio folder> --language ar --transcriber elevenlabs --cutout apple
+//   node <plugin>/engine/scripts/init.mjs <studio folder>      (update: keeps the earlier choices)
 //
 // Copies the template, writes talkvideo.config.json, and creates brand.json,
 // .env and the example only when they don't exist yet, so running it again
@@ -14,9 +15,12 @@ import { fileURLToPath } from "node:url";
 const engine = join(dirname(fileURLToPath(import.meta.url)), "..");
 const target = resolve(process.argv[2] ?? "talk-video-studio");
 const arg = (k, d) => (process.argv.includes(k) ? process.argv[process.argv.indexOf(k) + 1] : d);
-const language = arg("--language", "en");
-const transcriber = arg("--transcriber", "whisper");
-const cutout = arg("--cutout", process.platform === "darwin" ? "apple" : "mediapipe");
+// Running it again (an update) keeps the earlier choices unless a flag changes one.
+const cfgFile = join(target, "talkvideo.config.json");
+const old = existsSync(cfgFile) ? JSON.parse(readFileSync(cfgFile, "utf8")) : {};
+const language = arg("--language", old.language ?? "en");
+const transcriber = arg("--transcriber", old.transcriber ?? "whisper");
+const cutout = arg("--cutout", old.cutout ?? (process.platform === "darwin" ? "apple" : "mediapipe"));
 if (!["elevenlabs", "whisper"].includes(transcriber)) throw new Error("--transcriber must be elevenlabs or whisper");
 if (!["apple", "mediapipe"].includes(cutout)) throw new Error("--cutout must be apple or mediapipe");
 if (cutout === "apple" && process.platform !== "darwin") throw new Error('"apple" cutout needs macOS; use --cutout mediapipe');
@@ -41,9 +45,11 @@ once(".gitignore", "node_modules/\n.env\npublic/clips/\nvideos/*/takes/\nvideos/
 mkdirSync(join(target, "videos", "example"), { recursive: true });
 once("videos/example/video.json", readFileSync(join(engine, "examples", language === "ar" ? "video.ar.json" : "video.en.json"), "utf8"));
 
-const cfgFile = join(target, "talkvideo.config.json");
-const old = existsSync(cfgFile) ? JSON.parse(readFileSync(cfgFile, "utf8")) : {};
-const cfg = { ...old, language, transcriber, cutout, whisperModel: old.whisperModel ?? "large-v3-turbo", keyterms: old.keyterms ?? [] };
+// The plugin version this template came from, so doctor can tell when the
+// plugin was updated but the studio still runs the old template.
+const manifest = join(engine, "..", ".claude-plugin", "plugin.json");
+const templateVersion = existsSync(manifest) ? JSON.parse(readFileSync(manifest, "utf8")).version : null;
+const cfg = { ...old, language, transcriber, cutout, whisperModel: old.whisperModel ?? "large-v3-turbo", keyterms: old.keyterms ?? [], templateVersion };
 writeFileSync(cfgFile, JSON.stringify(cfg, null, 2) + "\n");
 
 // Remember where the studio is, so a new Claude session can find it.

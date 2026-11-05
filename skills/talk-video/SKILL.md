@@ -1,7 +1,8 @@
 ---
 name: talk-video
-description: Make a vertical talking-head video (Reels, TikTok, Shorts) from the user recording themselves - their head pops out of a card and every sentence gets an animated widget. Covers setup (Remotion, transcription, cutout), writing talking points, the recording studio, picking takes and cutting fillers, the cutout, the scenes, and the render. Use when the user wants to set up talk-video, make or edit a talking-head / face-to-camera video, record themselves for a video, or asks for "a video like that one with my head popping out".
+description: Makes a vertical talking-head video (Reels, TikTok, Shorts) from the user recording themselves - their head pops out of a card and every sentence gets an animated widget. Covers setup (Remotion, transcription, cutout), writing talking points, the recording studio, picking takes and cutting fillers, the cutout, the scenes, and the render. Use when the user wants to set up talk-video, make or edit a talking-head / face-to-camera video, record themselves for a video, or asks for "a video like that one with my head popping out".
 argument-hint: "[setup | doctor | new <topic> | make <id>]"
+allowed-tools: Bash(npm run *)
 ---
 
 # talk-video
@@ -15,8 +16,10 @@ Keep the jargon out: say "cut-out", not "segmentation matte".
 
 ## Where things are
 
-- **The engine** (template, scripts, recorder) ships with this plugin at
-  `<skill base directory>/../../engine`. Call that `ENGINE`.
+- **The plugin** is at `${CLAUDE_PLUGIN_ROOT}`. Call that `PLUGIN`. (If you
+  see that text literally, not a path, use this skill's base directory, two
+  levels up.) **The engine** (template, scripts, recorder) is `PLUGIN/engine`;
+  call it `ENGINE`.
 - **The studio** is the user's own folder, made from the engine by setup.
   Its path is in `~/.talk-video.json` (`{"studio": "..."}`). Call it `STUDIO`.
   Every `npm run …` below runs inside `STUDIO`.
@@ -25,6 +28,11 @@ Keep the jargon out: say "cut-out", not "segmentation matte".
   `STUDIO/public/clips/<id>/`.
 
 If `~/.talk-video.json` is missing or its folder is gone, run **Setup** first.
+**Before any work in the studio**, compare `templateVersion` in
+`STUDIO/talkvideo.config.json` with `version` in `PLUGIN/.claude-plugin/plugin.json`.
+If they differ or `templateVersion` is missing, the plugin was updated but the
+studio still runs the old template: tell the user in one line and update the
+studio first (Setup, update path; it keeps their videos, brand and key).
 
 ## The rules that make it good
 
@@ -48,12 +56,12 @@ Read [references/setup.md](references/setup.md) and follow it. In short:
 detect what's installed, ask everything in **one** `AskUserQuestion` call
 (language, transcription, cutout, studio folder), install only what's missing
 (show each install command, explain it in a line, let the user approve), run
-`node ENGINE/scripts/init.mjs`, `npm install`, `npm run doctor`, set the brand,
+`node ENGINE/scripts/init.mjs`, `npm install`, `npm run doctor -- --plugin "PLUGIN"`, set the brand,
 and show the example video's stills so they see a result in minutes.
 
 ## Doctor (`/talk-video:doctor`)
 
-`npm run doctor -- --json` in `STUDIO`. Explain each ✗ in one plain line with
+`npm run doctor -- --json --plugin "PLUGIN"` in `STUDIO`. Explain each ✗ in one plain line with
 its fix. Don't install anything without the user's go-ahead.
 
 ## Make a video

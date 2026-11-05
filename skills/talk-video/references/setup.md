@@ -13,7 +13,10 @@ Run these and keep the answers (don't print them back as a wall of text):
 - uv: `uv --version`
 - macOS only: `swift --version`
 - An existing studio: `~/.talk-video.json`. If it points to a folder that
-  exists, ask whether to update that one or make a new one.
+  exists, this is most likely an **update** (the plugin was updated, or doctor
+  said the template is old). Ask in one line: update that studio, or make a new
+  one? To update, skip to step 4 and run `init.mjs` with only the folder: it
+  keeps their choices, brand, key and videos. Then skip step 5.
 
 ## 2. Ask once
 
@@ -52,7 +55,7 @@ needed before the tool is on PATH: tell the user, then re-check.
 ```
 node "ENGINE/scripts/init.mjs" "<studio folder>" --language <ar|en|…> --transcriber <elevenlabs|whisper> --cutout <apple|mediapipe>
 cd "<studio folder>" && npm install
-npm run doctor
+npm run doctor -- --plugin "PLUGIN"
 ```
 
 `init.mjs` is safe to run again: it replaces the template code and keeps the

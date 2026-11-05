@@ -1,10 +1,10 @@
 {
   "name": "talk-video",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Turn yourself talking to a camera into a finished vertical video: your head pops out of a card and every sentence gets its own animated widget. Recording studio, transcription, cuts, cutout and render, in Arabic or English.",
   "author": {
-    "name": "YaMistro",
-    "url": "https://yamistro.com"
+    "name": "Efraim Nabil",
+    "url": "https://github.com/efraimnabil"
   },
   "homepage": "https://github.com/efraimnabil/talk-video",
   "repository": "https://github.com/efraimnabil/talk-video",
