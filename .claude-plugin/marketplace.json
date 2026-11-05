@@ -11,7 +11,7 @@
       "name": "talk-video",
       "source": "./",
       "description": "Talking-head videos with a pop-out head and one animated widget per sentence.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "license": "MIT",
       "category": "Design",
       "keywords": ["video", "remotion", "talking-head", "reels", "arabic"]

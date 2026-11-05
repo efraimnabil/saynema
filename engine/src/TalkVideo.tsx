@@ -125,6 +125,8 @@ const FaceLayer: React.FC<{ clip: string; scenes: Props["scenes"]; cuts: Cut[] }
 /** One or two lines; the accent words in the accent colour. */
 const Caption: React.FC<{ lines: string[]; accent: string[] }> = ({ lines, accent }) => {
   const f = useCurrentFrame();
+  // "accent" may hold a phrase ("كل حاجة"): match each of its words.
+  accent = accent.flatMap((a) => a.split(/\s+/)).filter(Boolean);
   return (
     <div dir={BRAND.dir} style={{ position: "absolute", top: 300, left: 60, right: 60, textAlign: "center", fontFamily }}>
       {lines.map((line, li) => {
